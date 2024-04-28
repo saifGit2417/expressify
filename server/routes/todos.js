@@ -1,11 +1,15 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 import { authMiddleWare } from "../middlewares/auth.middleware.js";
-import { addToDoValidate } from "../middlewares/todo.middleware.js";
+import {
+  addToDoValidate,
+  updateToDoValidate,
+} from "../middlewares/todo.middleware.js";
 
 const toDoRouter = express.Router();
 const prisma = new PrismaClient();
 
+// http://localhost:3333/api/v1/todo/getAllToDos/3
 toDoRouter.get("/getAllToDos/:userId", authMiddleWare, async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
@@ -54,4 +58,33 @@ toDoRouter.post("/add", authMiddleWare, addToDoValidate, async (req, res) => {
   }
 });
 
+/*
+http://localhost:3333/api/v1/todo/editToDo/5
+body requires
+*/
+toDoRouter.put(
+  "/editToDo/:toDoId",
+  updateToDoValidate,
+  authMiddleWare,
+  async (req, res) => {
+    try {
+      const toDoId = parseInt(req.params.toDoId);
+      const { title, description } = req.body;
+      const updateToDo = await prisma.toDos.update({
+        where: {
+          id: toDoId,
+        },
+        data: {
+          title,
+          description,
+        },
+      });
+      if (updateToDo) {
+        res.status(200).json({
+          message: "to do updated successfully",
+        });
+      }
+    } catch (error) {}
+  }
+);
 export default toDoRouter;

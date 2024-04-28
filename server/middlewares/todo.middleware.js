@@ -5,6 +5,11 @@ const AddToDo = z.object({
   description: z.string().max(500),
 });
 
+const UpdateToDo = z.object({
+  title: z.string().min(1),
+  description: z.string().max(500),
+});
+
 const validateSchema = (schema) => (req, res, next) => {
   try {
     const isSchemaValidated = schema.safeParse(req.body);
@@ -22,3 +27,4 @@ const validateSchema = (schema) => (req, res, next) => {
 };
 
 export const addToDoValidate = validateSchema(AddToDo);
+export const updateToDoValidate = validateSchema(UpdateToDo);
