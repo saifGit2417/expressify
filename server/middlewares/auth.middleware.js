@@ -12,7 +12,6 @@ export const authMiddleWare = (req, res, next) => {
       req.headers.userId = verifyToken.userId;
       next();
     }
-    console.log("verifyToken: ", verifyToken);
   } catch (error) {
     console.log("error: ", error);
   }
